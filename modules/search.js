@@ -6,26 +6,32 @@ export default class Search {
     this.api = api
 
     this.view.searchInput.addEventListener(
-      "keyup",
+      "input",
       this.view.debounce(this.searchRepos.bind(this))
     )
   }
-  searchRepos() {
-    const inputValue = this.view.searchInput.value
-    if (inputValue) {
-    !regSpace.test(inputValue) &&  this.api.loadRepos(inputValue).then((res) => {
-        if (res.ok)
-          res
-            .json()
-            .then((data) => {
-              data.items.forEach((el) => this.view.createRepos(el))
-            })
-            .catch((error) => {
-              console.error(error.message)
-            })
-      })
+  searchRepos(event) {
+    const inputValue = event.target.value.trim(); // Получаем значение из объекта события
+
+    if (this.view.searchInput.checkValidity() && !regSpace.test(inputValue)) {
+      this.api.loadRepos(inputValue)
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else {
+            throw new Error('Network response was not ok');
+          }
+        })
+        .then((data) => {
+          this.view.userListSuggest.textContent = ''; 
+          data.items.forEach((el) => this.view.createRepos(el));
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
     } else {
-      this.view.userListSuggest.innerHTML = ""
+      this.view.userListSuggest.textContent = ''; 
     }
   }
 }
+
