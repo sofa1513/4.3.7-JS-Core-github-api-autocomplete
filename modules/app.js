@@ -61,9 +61,16 @@ export default class View {
 
   makeRepo(data) {
     const dataElement = this.createElem("li", "main__picked-element");
-    dataElement.insertAdjacentHTML('beforeend', `<span> Name: ${data.name}</span>
-                             <span> Owner: ${data.owner.login}</span>  
-                             <span> Stars: ${data.stargazers_count}</span>`);
+
+    const nameElement = document.createElement('span');
+    nameElement.textContent = `Name: ${data.name}`;
+    const ownerElement = document.createElement('span');
+    ownerElement.textContent = `Owner: ${data.owner.login}`;
+    const starsElement = document.createElement('span');
+    starsElement.textContent = `Stars: ${data.stargazers_count}`;
+
+    dataElement.append(nameElement, ownerElement, starsElement);
+
     this.userListPicked.append(dataElement);
     this.makeBtn(dataElement);
   }
